@@ -11,6 +11,23 @@
 -- Los datos deberan ser ordenados por Total vendido y solo se deben mostrar las familias
 -- que se vendieron juntas más de 10 veces.
 
+
+---professor version
+SELECT fa.fami_id, fa.fami_detalle, fa2.fami_id, fa2.fami_detalle, 
+COUNT(*) AS cantidadFacturas,
+SUM(it1.item_cantidad) + SUM(it2.item_cantidad) AS TotalVendido
+FROM item_factura it1
+INNER JOIN item_factura it2 ON it1.item_numero = it2.item_numero AND it1.item_sucursal = it2.item_sucursal AND it1.item_tipo = it2.item_tipo
+AND it1.item_producto < it2.item_producto
+INNER JOIN producto pr ON pr.prod_codigo = it1.item_producto
+INNER JOIN familia fa ON pr.prod_familia = fa.fami_id 
+INNER JOIN producto pr2 ON pr2.prod_codigo = it2.item_producto
+INNER JOIN familia fa2 ON pr2.prod_familia = fa2.fami_id
+WHERE pr.prod_familia != pr2.prod_familia 
+GROUP BY fa.fami_id, fa.fami_detalle, fa2.fami_id, fa2.fami_detalle 
+HAVING COUNT(*) > 10
+--mine
+
 SELECT
     f1.fami_id AS familia1_codigo,
     f1.fami_detalle AS familia1_detalle,
