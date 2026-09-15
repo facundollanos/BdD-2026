@@ -16,22 +16,11 @@ PROD1 DETALLE1 PROD2 DETALLE2 VECES
 1718 PHILIPS MORRIS KS 1 7 0 5 P H I L I P S MORRIS BOX 10 5 6 2
 */
 
-SELECT 
-	P1.prod_codigo AS CODIGO_PROD1,
-	P1.prod_detalle AS DETALLE_PROD1,
-	P2.prod_codigo AS CODIGO_PROD2,
-	P2.prod_detalle AS DETALLE_PROD2,
-	COUNT(*) AS VECES
-FROM Factura F 
-
-	JOIN Item_Factura I1 ON I1.item_tipo = F.fact_tipo AND
-						   I1.item_sucursal = F.fact_sucursal AND
-						   I1.item_numero = F.fact_numero
-	JOIN Producto P1 ON P1.prod_codigo = I1.item_producto
-
-	JOIN Item_Factura I2 ON I2.item_tipo = F.fact_tipo AND
-							I2.item_sucursal = F.fact_sucursal AND
-							I2.item_numero = F.fact_numero
-	JOIN Producto P2 ON P2.prod_codigo = I2.item_producto
-
--- mi ejercicio 15, no se si esta bien
+SELECT it1.item_producto, it2.item_producto, pr.prod_detalle, pr2.prod_detalle, COUNT(*) AS cantidad 
+FROM item_factura it1
+INNER JOIN item_factura it2 ON it1.item_numero = it2.item_numero AND it1.item_sucursal = it2.item_sucursal AND it1.item_tipo = it2.item_tipo
+AND it1.item_producto < it2.item_producto
+INNER JOIN producto pr ON pr.prod_codigo = it1.item_producto
+INNER JOIN producto pr2 ON pr2.prod_codigo = it2.item_producto
+GROUP BY it1.item_producto, it2.item_producto, pr.prod_detalle, pr2.prod_detalle
+HAVING COUNT(*) > 500
